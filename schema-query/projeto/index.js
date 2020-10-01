@@ -3,15 +3,26 @@ const { ApolloServer, gql} = require('apollo-server')
 const typeDefs = gql`
     # pontos de eentrada se dua API!
     type Query {
-        ola: String!
+        ola: String
+        horaAtual : String
+        
+        
+        
     }
 
 `
 const resolvers = {
     Query: {
         ola() {
-            return 'Bom dia!'
+            return 'Bom dia '
+        },
+        horaAtual(){
+            
+            return `${new Date}`
+            
         }
+        
+        
     }
 }
 
