@@ -1,10 +1,35 @@
 const { ApolloServer, gql} = require('apollo-server')
 
+const usuarios = [{
+    id: 1,
+    nome: 'joãp silva',
+    email: 'jsilva@gmail.com',
+    idade:29
+},
+{
+    id: 2,
+    nome: 'Rafael Junior',
+    email: 'rafajun@wemail.com',
+    idade:31
+},{
+    id: 3,
+    nome: 'Christovam Munhoz',
+    email: 'cm@cm.com',
+    idade: 52
+}]
+
 const typeDefs = gql`
     scalar Date
 
+    type Produto{
+        nome: String!
+        preco: Float!
+        desconto: Float
+        precoComDesconto: Float
+    }
+
     type Usuario {
-        id: ID
+        id: Int
         nome: String!
         email: String!
         idade: Int!
@@ -17,11 +42,33 @@ const typeDefs = gql`
         ola: String!
         horaAtual : Date!
         usuarioLogado: Usuario
+        produtoEmDestaque : Produto
+        numeroMegaSena: [Int!]!
+        usuarios: [Usuario]
+        usuario(id: Int): Usuario
+        
+        
         
     }
 
 `
 const resolvers = {
+    Produto:{
+        precoComDesconto(produto){
+            if(produto.desconto){
+                return produto.preco * (1 - produto.desconto)
+            } else {
+                return produto.preco
+                
+            }
+        }
+    },
+    Usuario: {
+        salario(usuario){
+            return usuario.salario_real
+            
+        }
+    },
     Query: {
         ola() {
             return 'Bom dia '
@@ -37,9 +84,28 @@ const resolvers = {
                 idade: 52,
                 vip: false,
                 email: 'cm@cm.com',
-                salario: 9879.99
+                salario_real: 9879.99
             }
-        }
+        },
+        produtoEmDestaque(){
+            return {
+                nome: 'Notebook Gamer',
+                preco: 4899.99,
+                desconto: 0.5
+            }
+        },
+         numeroMegaSena(){
+             return [4, 13, 15, 25, 50, 55]
+         },
+         usuarios(){
+             return usuarios
+         },
+         usuario(_,{ id }){
+             const selecionados = usuarios
+             .filter(u => u.id === id)
+             return selecionados ? selecionados[0] : null
+             
+         }
         
         
     }
